@@ -1,0 +1,43 @@
+.page { padding: 24rpx 24rpx 180rpx; min-height: 100vh; }
+
+.loading-skel { padding: 24rpx; }
+.skel-title { height: 60rpx; width: 80%; }
+.skel-meta { height: 30rpx; width: 60%; }
+.skel-line { height: 30rpx; width: 100%; }
+.w-70 { width: 70%; }
+
+.article { padding: 32rpx; }
+.cover { width: 100%; height: 360rpx; border-radius: 16rpx; margin-bottom: 24rpx; display: block; }
+.tags { display: flex; flex-wrap: wrap; }
+.title { line-height: 1.4; }
+.meta { color: #888; }
+.content { min-height: 400rpx; font-size: 30rpx; line-height: 1.8; color: #333; }
+.content image { max-width: 100%; }
+
+.fixed-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+  display: flex;
+  justify-content: space-around;
+  gap: 20rpx;
+  box-shadow: 0 -2rpx 20rpx rgba(0,0,0,0.05);
+}
+.act-btn { flex: 1; margin: 0 10rpx; }
+
+/* 评论区 */
+.comments { padding: 32rpx; }
+.comment-total { color: #aaa; }
+.comment-input-wrap { display: flex; flex-direction: column; align-items: flex-end; }
+.comment-input { min-height: 140rpx; font-size: 28rpx; }
+.comment-submit { margin-top: 16rpx; width: 160rpx; }
+.comment-item { padding: 20rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.comment-item:last-child { border-bottom: none; }
+.comment-user { align-items: center; }
+.comment-admin-tag { margin-left: 12rpx; font-size: 20rpx; }
+.comment-del { color: #F56C6C; margin-left: 20rpx; }
+.comment-content { font-size: 28rpx; color: #333; line-height: 1.7; word-break: break-all; }

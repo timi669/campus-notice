@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "校园公告资讯",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

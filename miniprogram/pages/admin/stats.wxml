@@ -1,0 +1,68 @@
+<view class="page">
+  <view class="kpi-grid">
+    <view class="kpi-card kpi-1">
+      <view class="kpi-label">👥 用户总数</view>
+      <view class="kpi-value">{{stats.user_count}}</view>
+      <view class="kpi-sub">学生 {{stats.student_count}} · 管理员 {{stats.admin_count}}</view>
+    </view>
+    <view class="kpi-card kpi-2">
+      <view class="kpi-label">📢 公告总数</view>
+      <view class="kpi-value">{{stats.notice_count}}</view>
+      <view class="kpi-sub">草稿 {{stats.draft_count}} 篇</view>
+    </view>
+    <view class="kpi-card kpi-3">
+      <view class="kpi-label">📂 分类数</view>
+      <view class="kpi-value">{{stats.category_count}}</view>
+      <view class="kpi-sub">已启用分类</view>
+    </view>
+    <view class="kpi-card kpi-4">
+      <view class="kpi-label">⭐ 收藏总数</view>
+      <view class="kpi-value">{{stats.favorite_count}}</view>
+      <view class="kpi-sub">学生收藏记录</view>
+    </view>
+    <view class="kpi-card kpi-5 span-2">
+      <view class="kpi-label">👁 全站浏览量</view>
+      <view class="kpi-value big">{{stats.views_sum}}</view>
+      <view class="kpi-sub">所有公告累计浏览次数</view>
+    </view>
+  </view>
+
+  <view class="card mt-24">
+    <view class="sec-title font-bold mb-16">📊 分类公告分布</view>
+    <view wx:if="{{category_stats.length === 0}}" class="text-sm text-muted p-16 text-center">暂无数据</view>
+    <view class="bar-item" wx:for="{{category_stats}}" wx:key="id">
+      <view class="flex-between mb-8">
+        <text class="bar-name">{{item.name}}</text>
+        <text class="bar-count text-sm text-muted">{{item.notice_count}} 篇</text>
+      </view>
+      <view class="bar-bg">
+        <view class="bar-fill" style="width: {{item.percent}}%;"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card mt-24">
+    <view class="sec-title font-bold mb-16">🔥 热门公告 Top5</view>
+    <view wx:if="{{hot_notices.length === 0}}" class="text-sm text-muted p-16 text-center">暂无数据</view>
+    <view class="hot-item" wx:for="{{hot_notices}}" wx:key="id" data-id="{{item.id}}" bindtap="goNotice">
+      <view class="hot-rank rank-{{index + 1}}">{{index + 1}}</view>
+      <view class="flex-1">
+        <view class="text-ellipsis font-bold">{{item.title}}</view>
+      </view>
+      <view class="text-danger font-bold">👁 {{item.views_count}}</view>
+    </view>
+  </view>
+
+  <view class="card mt-24 mb-32">
+    <view class="sec-title font-bold mb-16">🕒 最新发布动态</view>
+    <view wx:if="{{recent_notices.length === 0}}" class="text-sm text-muted p-16 text-center">暂无数据</view>
+    <view class="hot-item" wx:for="{{recent_notices}}" wx:key="id" data-id="{{item.id}}" bindtap="goNotice">
+      <view class="hot-rank">📌</view>
+      <view class="flex-1">
+        <view class="text-ellipsis">{{item.title}}</view>
+        <view class="text-sm text-muted mt-8">浏览 {{item.views_count}} · {{item.created_at}}</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+</view>

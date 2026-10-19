@@ -1,0 +1,79 @@
+<view class="page">
+  <view class="card mb-24" hidden="{{loading}}">
+    <view class="form-item">
+      <text class="label">标题<span class="text-danger">*</span></text>
+      <input class="input-box" maxlength="200" placeholder="请输入公告标题（不超过200字）"
+        model:value="{{form.title}}" data-field="title" bindinput="onField"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+      <view class="counter text-sm text-muted text-right">{{form.title.length}}/200</view>
+    </view>
+
+    <view class="form-item mt-24">
+      <text class="label">分类<span class="text-danger">*</span></text>
+      <picker bindchange="onCatChange" value="{{catIndex}}" range="{{categories}}" range-key="name">
+        <view class="input-box flex-between">
+          <text class="{{categories.length ? '' : 'text-muted'}}">
+            {{categories[catIndex] ? (categories[catIndex].icon || '') + ' ' + categories[catIndex].name : '请选择分类'}}
+          </text>
+          <text class="text-muted">▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item mt-24">
+      <text class="label">摘要<text class="text-sm text-muted ml-8">（选填，列表页展示）</text></text>
+      <textarea class="textarea-box" maxlength="500" placeholder="摘要可以帮助读者快速了解内容（不超过500字）"
+        model:value="{{form.summary}}" data-field="summary" bindinput="onField"
+        auto-height adjust-position="{{true}}" cursor-spacing="30" show-confirm-bar="{{false}}"/>
+      <view class="counter text-sm text-muted text-right">{{form.summary.length}}/500</view>
+    </view>
+
+    <view class="form-item mt-24">
+      <text class="label">正文内容<span class="text-danger">*</span></text>
+      <textarea class="textarea-box content-area" placeholder="请输入公告正文内容..."
+        model:value="{{form.content}}" data-field="content" bindinput="onField"
+        auto-height adjust-position="{{true}}" cursor-spacing="30" show-confirm-bar="{{false}}"/>
+    </view>
+
+    <view class="form-item mt-24">
+      <text class="label">封面图<text class="text-sm text-muted ml-8">（选填）</text></text>
+      <view class="cover-uploader" wx:if="{{!form.cover_image}}" bindtap="chooseCoverImage">
+        <text class="uploader-icon">+</text>
+        <text class="uploader-text">{{uploading ? '上传中...' : '点击上传封面图'}}</text>
+      </view>
+      <view class="cover-preview" wx:if="{{form.cover_image}}">
+        <image class="cover-img" src="{{cover_image_full}}" mode="aspectFill" bindtap="previewCoverImage"/>
+        <view class="cover-actions">
+          <text class="cover-btn" bindtap="chooseCoverImage">重新上传</text>
+          <text class="cover-btn text-danger" bindtap="removeCoverImage">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="switch-row mt-24">
+      <text class="label">是否置顶</text>
+      <switch checked="{{form.is_top === 1}}" bindchange="toggleTop" color="#4F7DFB" />
+    </view>
+
+    <view class="switch-row mt-16">
+      <text class="label">发布状态</text>
+      <view class="flex align-items-center">
+        <text class="text-sm text-muted mr-8">{{form.status === 1 ? '已发布' : '草稿'}}</text>
+        <switch checked="{{form.status === 1}}" bindchange="toggleStatus" color="#09BB07" />
+      </view>
+    </view>
+  </view>
+
+  <view class="card loading-state" hidden="{{!loading}}">
+    <view class="skeleton" style="height:60rpx;"></view>
+    <view class="skeleton mt-16" style="height:200rpx;"></view>
+    <view class="skeleton mt-16" style="height:400rpx;"></view>
+  </view>
+
+  <view class="footer-actions">
+    <button class="btn btn-outline flex-1 mr-16" bindtap="saveDraft" disabled="{{saving}}">存为草稿</button>
+    <button class="btn btn-primary flex-1 ml-16" bindtap="save" loading="{{saving}}" disabled="{{saving}}">
+      {{isEdit ? '保存修改' : '立即发布'}}
+    </button>
+  </view>
+</view>

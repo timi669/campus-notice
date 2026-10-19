@@ -1,0 +1,49 @@
+<view class="page">
+  <view class="search-bar card mb-24">
+    <view class="flex">
+      <input class="search-input input-box flex-1 mr-16" placeholder="搜索用户名/昵称"
+        model:value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" bindconfirm="search"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+      <button class="btn btn-primary" bindtap="search" size="mini">搜索</button>
+    </view>
+    <view class="role-tabs mt-16 flex">
+      <view class="rtab {{roleFilter === 'all' ? 'active' : ''}}" data-role="all" bindtap="filterRole">全部</view>
+      <view class="rtab {{roleFilter === 'student' ? 'active' : ''}}" data-role="student" bindtap="filterRole">学生</view>
+      <view class="rtab {{roleFilter === 'admin' ? 'active' : ''}}" data-role="admin" bindtap="filterRole">管理员</view>
+      <view class="text-sm text-muted flex-1 text-right">共 {{total}} 人</view>
+    </view>
+  </view>
+
+  <view class="user-list">
+    <view class="user-item card mb-16" wx:for="{{list}}" wx:key="id">
+      <view class="flex-between">
+        <view class="flex align-items-center flex-1">
+          <view class="avatar">{{item.nickname ? item.nickname[0] : item.username[0]}}</view>
+          <view style="margin-left:20rpx;flex:1;">
+            <view class="font-bold">
+              {{item.nickname || item.username}}
+              <view class="tag {{item.role === 'admin' ? 'tag-danger' : 'tag-success'}} ml-8">{{item.roleText}}</view>
+            </view>
+            <view class="text-sm text-muted mt-8">@{{item.username}} · 注册于 {{item.createdText}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="actions mt-16 flex">
+        <button class="mini-btn btn-outline flex-1" size="mini"
+          data-id="{{item.id}}" data-name="{{item.nickname || item.username}}" data-role="{{item.role}}"
+          bindtap="toggleRole">
+          {{item.role === 'admin' ? '降级学生' : '设为管理员'}}
+        </button>
+        <button class="mini-btn btn-danger flex-1 ml-8" size="mini"
+          data-id="{{item.id}}" data-name="{{item.nickname || item.username}}"
+          bindtap="deleteUser">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无用户数据</view>
+  <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore && list.length > 0}}">—— 没有更多了 ——</text>
+  </view>
+</view>

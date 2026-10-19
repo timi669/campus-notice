@@ -1,0 +1,32 @@
+<view class="page">
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filter === 'all' ? 'active' : ''}}" data-filter="all" bindtap="switchFilter">全部</view>
+    <view class="filter-item {{filter === 'unread' ? 'active' : ''}}" data-filter="unread" bindtap="switchFilter">未读</view>
+    <view class="read-all" bindtap="markAllRead">全部已读</view>
+  </view>
+
+  <!-- 通知列表 -->
+  <view class="list" wx:if="{{list.length > 0}}">
+    <view class="notif-item {{item.is_read === 1 ? 'read' : ''}}" wx:for="{{list}}" wx:key="id"
+      data-item="{{item}}" bindtap="tapItem">
+      <view class="notif-dot" wx:if="{{item.is_read === 0}}"></view>
+      <view class="notif-content">
+        <view class="notif-title">{{item.title}}</view>
+        <view class="notif-desc" wx:if="{{item.content}}">{{item.content}}</view>
+        <view class="notif-time">{{item.timeText}}</view>
+      </view>
+      <text class="notif-arrow" wx:if="{{item.notice_id}}">›</text>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">{{filter === 'unread' ? '暂无未读通知' : '暂无通知消息'}}</view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{loading}}">加载中...</view>
+  <view class="load-more" wx:if="{{!hasMore && list.length > 0}}">没有更多了</view>
+</view>

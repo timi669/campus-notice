@@ -1,0 +1,102 @@
+<view class="page">
+  <view class="loading-skel" wx:if="{{loading}}">
+    <view class="skel-title skeleton"></view>
+    <view class="skel-meta skeleton mt-16"></view>
+    <view class="skel-line skeleton mt-24"></view>
+    <view class="skel-line skeleton mt-16"></view>
+    <view class="skel-line skeleton mt-16 w-70"></view>
+  </view>
+
+  <block wx:elif="{{detail}}">
+    <view class="article card">
+      <image wx:if="{{detail.cover_image_full}}" class="cover" src="{{detail.cover_image_full}}" mode="aspectFill" bindtap="previewCover" />
+      <view class="tags">
+        <view class="tag tag-primary" wx:if="{{detail.category}}">{{detail.category.icon || ''}} {{detail.category.name}}</view>
+        <view class="tag tag-danger" wx:if="{{detail.is_top}}">置顶</view>
+        <view class="tag tag-success" wx:if="{{detail.views_count > 500}}">🔥 热门</view>
+      </view>
+
+      <view class="title text-xl font-bold mt-16">{{detail.title}}</view>
+
+      <view class="meta text-sm text-muted mt-16 flex-between">
+        <view class="flex">
+          <text wx:if="{{detail.author}}">作者：{{detail.author.nickname || detail.author.username}}</text>
+        </view>
+        <view>
+          <text>👁 {{detail.views_count}} · ❤ {{detail.like_count || 0}} · </text>
+          <text>{{detail.timeText}}</text>
+        </view>
+      </view>
+      <view class="text-sm text-warning mt-8" wx:if="{{detail.updateText}}">更新于：{{detail.updateText}}</view>
+
+      <view class="divider mt-24"></view>
+
+      <view class="summary p-16 mt-16" wx:if="{{detail.summary}}" style="background:#FFF9EC;border-radius:12rpx;">
+        <text class="text-sm" style="color:#b8860b;">📌 摘要：</text>
+        <text class="text-sm" style="color:#5a4a1a;">{{detail.summary}}</text>
+      </view>
+
+      <view class="content mt-24">
+        <rich-text nodes="{{contentHtml}}"></rich-text>
+      </view>
+    </view>
+
+    <view class="comments card mt-24">
+      <view class="text-lg font-bold">评论区</view>
+      <view class="comment-total text-sm text-muted mt-8" wx:if="{{commentsTotal > 0}}">共 {{commentsTotal}} 条评论</view>
+
+      <view class="comment-input-wrap mt-16">
+        <textarea
+          class="textarea-box comment-input"
+          placeholder="写下你的评论…"
+          value="{{commentText}}"
+          maxlength="1000"
+          bindinput="onCommentInput"
+          auto-height
+        />
+        <button
+          class="btn btn-primary comment-submit"
+          size="mini"
+          loading="{{submitting}}"
+          bindtap="submitComment">发表</button>
+      </view>
+
+      <view class="divider mt-24"></view>
+
+      <view wx:if="{{commentLoading}}" class="text-sm text-muted mt-16">评论加载中…</view>
+      <block wx:elif="{{comments.length > 0}}">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+          <view class="flex-between">
+            <view class="comment-user flex">
+              <text class="font-bold">{{item.user.nickname || item.user.username}}</text>
+              <text class="tag tag-danger comment-admin-tag" wx:if="{{item.user_id === currentUserId}}">我的评论</text>
+            </view>
+            <view class="flex">
+              <text class="text-sm text-muted">{{item.timeText}}</text>
+              <text
+                wx:if="{{item.user_id === currentUserId || currentUserRole === 'admin'}}"
+                class="comment-del text-sm"
+                data-id="{{item.id}}"
+                bindtap="deleteComment">删除</text>
+            </view>
+          </view>
+          <view class="comment-content mt-8">{{item.content}}</view>
+        </view>
+      </block>
+      <view wx:else class="text-sm text-muted mt-16">暂无评论，来抢沙发～</view>
+    </view>
+
+    <view class="actions fixed-bottom">
+      <button class="act-btn btn-outline" bindtap="share" size="mini">复制分享</button>
+      <button class="act-btn {{detail.is_liked ? 'btn-primary' : 'btn-outline'}}" bindtap="toggleLike" size="mini">
+        {{detail.is_liked ? '❤ 已赞' : '♡ 点赞'}}
+      </button>
+      <button class="act-btn {{detail.is_favorited ? 'btn-primary' : 'btn-outline'}}" bindtap="toggleFavorite" size="mini">
+        {{detail.is_favorited ? '⭐ 已收藏' : '☆ 收藏'}}
+      </button>
+      <button class="act-btn btn-primary" open-type="share" size="mini">转发</button>
+    </view>
+  </block>
+
+  <view class="empty" wx:else>公告不存在或已被删除</view>
+</view>

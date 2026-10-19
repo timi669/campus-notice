@@ -1,0 +1,76 @@
+<!--pages/index/index.wxml-->
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="goSearch">
+    <view class="search-box">
+      <text class="icon">🔍</text>
+      <text class="placeholder">搜索公告标题、内容...</text>
+    </view>
+  </view>
+
+  <!-- 置顶轮播 -->
+  <view class="banner-wrap" wx:if="{{topNotices.length > 0}}">
+    <swiper class="banner" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+      <swiper-item wx:for="{{banner}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="banner-item">
+          <view class="banner-title text-ellipsis">{{item.title}}</view>
+          <view class="banner-tag">置顶</view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 分类入口 -->
+  <view class="section categories" wx:if="{{categories.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">📂 分类浏览</text>
+      <text class="section-more" bindtap="goCategoryPage">全部 ›</text>
+    </view>
+    <view class="cat-grid">
+      <view class="cat-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}">
+        <view class="cat-icon">{{item.icon || '📌'}}</view>
+        <view class="cat-name text-ellipsis">{{item.name}}</view>
+        <view class="cat-count">{{item.notice_count || 0}}篇</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排序切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{tab === 'latest' ? 'active' : ''}}" data-tab="latest" bindtap="switchTab">🕐 最新发布</view>
+    <view class="tab-item {{tab === 'hottest' ? 'active' : ''}}" data-tab="hottest" bindtap="switchTab">🔥 最多浏览</view>
+  </view>
+
+  <!-- 公告列表 -->
+  <view class="notice-list">
+    <view class="notice-item card" wx:for="{{noticeList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="notice-head">
+        <block wx:if="{{item.category}}">
+          <view class="tag tag-primary">{{item.category.icon || ''}} {{item.category.name}}</view>
+        </block>
+        <view class="tag tag-danger" wx:if="{{item.is_top}}">置顶</view>
+        <view class="notice-time text-sm text-muted flex-1">{{item.timeText}}</view>
+      </view>
+      <view class="notice-body flex mt-16">
+        <view class="notice-main flex-1">
+          <view class="notice-title text-lg font-bold text-ellipsis-2">{{item.title}}</view>
+          <view class="notice-summary text-sm text-muted text-ellipsis-2 mt-8" wx:if="{{item.summary}}">{{item.summary}}</view>
+        </view>
+        <image wx:if="{{item.cover_image_full}}" class="notice-cover" src="{{item.cover_image_full}}" mode="aspectFill" />
+      </view>
+      <view class="notice-foot flex-between mt-16">
+        <view class="text-sm text-muted">👁 {{item.views_count}}</view>
+        <view class="text-sm text-muted" wx:if="{{item.is_favorited}}">⭐ 已收藏</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && noticeList.length === 0}}">
+    <text>暂无公告数据～</text>
+  </view>
+
+  <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore && noticeList.length > 0}}">—— 没有更多了 ——</text>
+  </view>
+</view>

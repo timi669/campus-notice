@@ -1,0 +1,79 @@
+.page { padding-bottom: 40rpx; }
+
+.search-bar {
+  padding: 16rpx 24rpx 0;
+}
+.search-box {
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 16rpx 28rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+}
+.search-box .icon { font-size: 28rpx; margin-right: 12rpx; color: #999; }
+.search-box .placeholder { color: #bbb; font-size: 26rpx; }
+
+.banner-wrap { padding: 20rpx 24rpx 0; }
+.banner { height: 180rpx; border-radius: 16rpx; overflow: hidden; }
+.banner-item {
+  position: relative;
+  height: 100%;
+  padding: 32rpx;
+  background: linear-gradient(135deg, #4F7DFB 0%, #6D9BFF 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.banner-title { font-size: 30rpx; font-weight: bold; padding-right: 100rpx; }
+.banner-tag {
+  position: absolute;
+  right: 24rpx;
+  top: 24rpx;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 20rpx;
+  padding: 4rpx 20rpx;
+  font-size: 22rpx;
+}
+
+.section { padding: 24rpx; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx; }
+.section-title { font-size: 32rpx; font-weight: bold; }
+.section-more { font-size: 26rpx; color: #4F7DFB; }
+
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20rpx; }
+.cat-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 8rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.03);
+}
+.cat-icon { font-size: 48rpx; }
+.cat-name { font-size: 26rpx; margin-top: 8rpx; }
+.cat-count { font-size: 22rpx; color: #999; margin-top: 4rpx; }
+
+.tab-bar {
+  display: flex;
+  padding: 0 24rpx;
+  margin-bottom: 16rpx;
+}
+.tab-item {
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 4rpx solid transparent;
+}
+.tab-item.active { color: #4F7DFB; border-bottom-color: #4F7DFB; font-weight: bold; }
+
+.notice-list { padding: 0 24rpx; }
+.notice-item { margin-bottom: 20rpx; }
+.notice-head { display: flex; align-items: center; }
+.notice-time { text-align: right; }
+.notice-title { line-height: 1.4; }
+.notice-summary { line-height: 1.5; }
+.notice-body { align-items: flex-start; }
+.notice-main { min-width: 0; }
+.notice-cover { width: 180rpx; height: 135rpx; border-radius: 12rpx; margin-left: 20rpx; flex-shrink: 0; }

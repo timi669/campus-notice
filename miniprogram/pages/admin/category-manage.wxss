@@ -1,0 +1,91 @@
+.page { padding: 24rpx 24rpx 140rpx; min-height: 100vh; }
+.mt-8 { margin-top: 16rpx; }
+.ml-8 { margin-left: 16rpx; }
+.mr-16 { margin-right: 16rpx; }
+.ml-16 { margin-left: 16rpx; }
+.align-items-center { align-items: center; }
+
+.cat-item { padding: 24rpx; margin-bottom: 20rpx; }
+.cat-icon {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background: #F2F5FF;
+  border-radius: 20rpx;
+  font-size: 40rpx;
+}
+.status-tag {
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+}
+.status-tag.ok { background: #E7F9EF; color: #09BB07; }
+.status-tag.no { background: #F0F0F0; color: #999; }
+
+.mini-btn { padding: 0 20rpx; font-size: 24rpx; height: 56rpx; line-height: 56rpx; border-radius: 8rpx; display: inline-flex; align-items: center; justify-content: center; }
+
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4F7DFB, #8FA8FF);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(79,125,251,0.4);
+}
+.fab-icon { font-size: 52rpx; line-height: 1; margin-top: -4rpx; }
+
+.modal-mask {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  padding: 40rpx;
+}
+.modal {
+  width: 100%;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 36rpx 32rpx;
+  box-shadow: 0 10rpx 40rpx rgba(0,0,0,0.2);
+}
+.modal-title { text-align: center; }
+.form-item .label { font-size: 26rpx; color: #555; margin-bottom: 12rpx; display: block; }
+.switch-row { padding: 12rpx 0; }
+.switch-row .label { font-size: 28rpx; }
+.modal-foot { gap: 20rpx; }
+
+/* ---------- emoji 快捷选择样式（毕设演示用，不用按 Win+.） ---------- */
+.emoji-picker {
+  padding: 16rpx;
+  background: #f7f9fc;
+  border-radius: 16rpx;
+  margin-top: 8rpx;
+}
+.emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.emoji-item {
+  width: 76rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  text-align: center;
+  font-size: 40rpx;
+  border-radius: 14rpx;
+  background: #fff;
+  border: 2rpx solid transparent;
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.04);
+}
+.emoji-item.active {
+  border-color: var(--primary-color);
+  background: rgba(79, 125, 251, 0.08);
+  transform: scale(1.1);
+}

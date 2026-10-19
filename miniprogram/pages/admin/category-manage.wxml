@@ -1,0 +1,84 @@
+<view class="page">
+  <view class="hint card mb-24 p-16 text-sm text-muted">
+    💡 小提示：图标可输入 emoji 表情（如 📢 🎓 🎪），前台会直接显示；排序值越小越靠前。
+  </view>
+
+  <view class="cat-list">
+    <view class="cat-item card" wx:for="{{list}}" wx:key="id">
+      <view class="cat-head flex-between">
+        <view class="flex align-items-center">
+          <view class="cat-icon">{{item.icon || '📌'}}</view>
+          <view style="margin-left:16rpx;">
+            <view class="font-bold text-lg">{{item.name}}</view>
+            <view class="text-sm text-muted mt-8">排序：{{item.sort_order || 0}} · 公告数：{{item.notice_count || 0}}</view>
+          </view>
+        </view>
+        <view class="status-tag {{item.status === 1 ? 'ok' : 'no'}}">
+          {{item.status === 1 ? '启用' : '禁用'}}
+        </view>
+      </view>
+      <view class="cat-actions flex mt-16">
+        <button class="mini-btn btn-outline flex-1" size="mini" data-id="{{item.id}}" bindtap="openEdit">编辑</button>
+        <button class="mini-btn btn-outline flex-1 ml-8" size="mini" data-id="{{item.id}}" bindtap="toggleStatus">
+          {{item.status === 1 ? '禁用' : '启用'}}
+        </button>
+        <button class="mini-btn btn-danger flex-1 ml-8" size="mini" data-id="{{item.id}}" bindtap="deleteCat">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无分类，点击右下角按钮添加</view>
+
+  <view class="fab" bindtap="openCreate">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view class="modal-mask" hidden="{{!showEdit}}" bindtap="closeEdit">
+    <view class="modal" catchtap="noOp">
+      <view class="modal-title font-bold text-lg">{{editMode === 'create' ? '新建分类' : '编辑分类'}}</view>
+
+      <view class="form-item mt-24">
+        <text class="label">名称*</text>
+        <input class="input-box" maxlength="50" placeholder="分类名称，如：学校通知"
+          model:value="{{form.name}}" data-field="name" bindinput="onField"
+          adjust-position="{{true}}" cursor-spacing="30"/>
+      </view>
+
+      <view class="form-item mt-24">
+        <text class="label">图标（emoji）</text>
+        <input class="input-box" maxlength="20" placeholder="📢 输入 emoji"
+          model:value="{{form.icon}}" data-field="icon" bindinput="onField"
+          adjust-position="{{true}}" cursor-spacing="30"/>
+        <view class="text-sm text-muted mt-8">预览：<text style="font-size:36rpx;">{{form.icon || '📌'}}</text></view>
+        <view class="emoji-picker mt-16">
+          <view class="text-sm text-muted mb-12">👇 直接点下面的图标选一个：</view>
+          <view class="emoji-grid">
+            <view class="emoji-item {{item === form.icon ? 'active' : ''}}"
+              wx:for="{{commonEmojis}}" wx:key="*this"
+              data-icon="{{item}}" bindtap="pickIcon">
+              {{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item mt-24">
+        <text class="label">排序值</text>
+        <input class="input-box" type="number" placeholder="数字，越小越靠前"
+          model:value="{{form.sort_order}}" data-field="sort_order" bindinput="onField"
+          adjust-position="{{true}}" cursor-spacing="30"/>
+      </view>
+
+      <view class="switch-row mt-24 flex-between">
+        <text class="label">启用状态</text>
+        <switch checked="{{form.status === 1}}" bindchange="onFormStatus" color="#09BB07" />
+      </view>
+
+      <view class="modal-foot mt-32 flex">
+        <button class="btn btn-outline flex-1 mr-16" bindtap="closeEdit">取消</button>
+        <button class="btn btn-primary flex-1 ml-16" bindtap="submitForm">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

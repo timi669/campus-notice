@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="toolbar card mb-24">
+    <view class="tb-row flex-between">
+      <view class="filter-tabs flex">
+        <view class="ftab {{statusFilter === 'all' ? 'active' : ''}}" data-status="all" bindtap="filterStatus">全部</view>
+        <view class="ftab {{statusFilter === 'published' ? 'active' : ''}}" data-status="published" bindtap="filterStatus">已发布</view>
+        <view class="ftab {{statusFilter === 'draft' ? 'active' : ''}}" data-status="draft" bindtap="filterStatus">草稿</view>
+      </view>
+      <view class="ftab-mini" bindtap="toggleMine">
+        <switch checked="{{onlyMine}}" color="#4F7DFB" style="transform:scale(0.75);transform-origin:right;"/>
+        <text class="text-sm ml-8">只看我</text>
+      </view>
+    </view>
+    <view class="tb-total text-sm text-muted mt-8">共 {{total}} 条公告</view>
+  </view>
+
+  <view class="notice-list">
+    <view class="notice-item card mb-16" wx:for="{{list}}" wx:key="id">
+      <view class="notice-head flex-between" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="flex">
+          <view class="tag tag-primary" wx:if="{{item.category}}">{{item.category.name}}</view>
+          <view class="tag tag-danger ml-8" wx:if="{{item.is_top}}">置顶</view>
+          <view class="tag {{item.status === 1 ? 'tag-success' : 'tag-warning'}} ml-8">{{item.statusText}}</view>
+        </view>
+        <view class="text-sm text-muted">{{item.timeText}}</view>
+      </view>
+      <view class="notice-title mt-16 font-bold text-ellipsis-2" bindtap="goDetail" data-id="{{item.id}}">{{item.title}}</view>
+      <view class="notice-summary mt-8 text-sm text-muted text-ellipsis" wx:if="{{item.summary}}">{{item.summary}}</view>
+      <view class="notice-foot flex-between mt-16">
+        <view class="text-sm text-muted">👁 {{item.views_count}}</view>
+        <view class="actions">
+          <button class="mini-btn btn-outline" size="mini" catchtap="editNotice" data-id="{{item.id}}">编辑</button>
+          <button class="mini-btn btn-danger ml-8" size="mini" catchtap="deleteNotice" data-id="{{item.id}}" data-title="{{item.title}}">删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无公告，点右下角按钮发布一篇吧～</view>
+  <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore && list.length > 0}}">—— 没有更多了 ——</text>
+  </view>
+
+  <view class="fab" bindtap="goNew">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

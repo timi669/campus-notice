@@ -1,0 +1,85 @@
+<view class="page">
+  <view class="welcome card">
+    <view class="text-lg font-bold">🎩 管理员工作台</view>
+    <view class="text-sm text-muted mt-8">欢迎回来！今日也辛苦啦 🎉</view>
+  </view>
+
+  <!-- 数据卡片 -->
+  <view class="stat-grid mt-24">
+    <view class="stat-card" style="background:linear-gradient(135deg,#4F7DFB,#8FA8FF);color:#fff;">
+      <view class="stat-value text-xl font-bold">{{stats.user_count}}</view>
+      <view class="stat-label text-sm">👥 用户总数</view>
+    </view>
+    <view class="stat-card" style="background:linear-gradient(135deg,#37C6C4,#8AE6E5);color:#fff;">
+      <view class="stat-value text-xl font-bold">{{stats.notice_count}}</view>
+      <view class="stat-label text-sm">📢 已发布公告</view>
+    </view>
+    <view class="stat-card" style="background:linear-gradient(135deg,#FF976A,#FFBD99);color:#fff;">
+      <view class="stat-value text-xl font-bold">{{stats.category_count}}</view>
+      <view class="stat-label text-sm">📂 分类数</view>
+    </view>
+    <view class="stat-card" style="background:linear-gradient(135deg,#8F6FE8,#B9A0F5);color:#fff;">
+      <view class="stat-value text-xl font-bold">{{stats.views_sum}}</view>
+      <view class="stat-label text-sm">👁 总浏览量</view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="section card mt-24">
+    <view class="sec-title font-bold mb-16">⚡ 快捷操作</view>
+    <view class="action-grid">
+      <view class="action-item" data-path="/pages/admin/notice-edit" bindtap="go">
+        <view class="a-icon" style="background:#E8F0FF;color:#4F7DFB;">✏️</view>
+        <view class="a-text">发布公告</view>
+      </view>
+      <view class="action-item" data-path="/pages/admin/notice-list" bindtap="go">
+        <view class="a-icon" style="background:#E7F9EF;color:#09BB07;">📋</view>
+        <view class="a-text">公告管理</view>
+      </view>
+      <view class="action-item" data-path="/pages/admin/category-manage" bindtap="go">
+        <view class="a-icon" style="background:#FFF2E8;color:#FF976A;">📂</view>
+        <view class="a-text">分类管理</view>
+      </view>
+      <view class="action-item" data-path="/pages/admin/user-manage" bindtap="go">
+        <view class="a-icon" style="background:#FFEBEB;color:#F56C6C;">👥</view>
+        <view class="a-text">用户管理</view>
+      </view>
+      <view class="action-item" data-path="/pages/admin/stats" bindtap="go">
+        <view class="a-icon" style="background:#F0EAFF;color:#8F6FE8;">📊</view>
+        <view class="a-text">数据统计</view>
+      </view>
+      <view class="action-item" data-path="/pages/index/index" bindtap="go">
+        <view class="a-icon" style="background:#F5F7FA;color:#666;">🏠</view>
+        <view class="a-text">返回首页</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近发布 -->
+  <view class="section card mt-24">
+    <view class="sec-title font-bold mb-16">🕒 最近发布</view>
+    <view wx:if="{{recent_notices.length === 0}}" class="text-sm text-muted p-16 text-center">暂无数据</view>
+    <view class="notice-row" wx:for="{{recent_notices}}" wx:key="id" data-id="{{item.id}}" bindtap="goNotice">
+      <view class="flex-1">
+        <view class="text-ellipsis font-bold">{{item.title}}</view>
+        <view class="text-sm text-muted mt-8">浏览 {{item.views_count}} · {{item.created_at}}</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 热门公告 -->
+  <view class="section card mt-24">
+    <view class="sec-title font-bold mb-16">🔥 热门公告 Top5</view>
+    <view wx:if="{{hot_notices.length === 0}}" class="text-sm text-muted p-16 text-center">暂无数据</view>
+    <view class="notice-row" wx:for="{{hot_notices}}" wx:key="id" data-id="{{item.id}}" bindtap="goNotice">
+      <view class="rank rank-{{index + 1}}">{{index + 1}}</view>
+      <view class="flex-1">
+        <view class="text-ellipsis">{{item.title}}</view>
+      </view>
+      <view class="text-sm text-danger font-bold">👁 {{item.views_count}}</view>
+    </view>
+  </view>
+
+  <view class="mb-32"></view>
+</view>

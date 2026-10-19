@@ -1,0 +1,62 @@
+<view class="page">
+  <view class="logo-wrap">
+    <view class="logo">📢</view>
+    <view class="brand text-xl font-bold mt-16">校园公告资讯</view>
+    <view class="slogan text-sm text-muted mt-8">获取校园最新资讯，一手掌握</view>
+  </view>
+
+  <view class="mode-switch">
+    <view class="mode-item {{mode === 'login' ? 'active' : ''}}" data-mode="login" bindtap="switchMode">登录</view>
+    <view class="mode-item {{mode === 'register' ? 'active' : ''}}" data-mode="register" bindtap="switchMode">注册</view>
+  </view>
+
+  <view class="form card">
+    <view class="form-item">
+      <text class="label">用户名</text>
+      <input class="input-box" placeholder="请输入用户名（至少3位）"
+        model:value="{{form.username}}" data-field="username" bindinput="onInput"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+
+    <view class="form-item mt-24" hidden="{{mode !== 'register'}}">
+      <text class="label">昵称</text>
+      <input class="input-box" placeholder="请输入昵称"
+        model:value="{{form.nickname}}" data-field="nickname" bindinput="onInput"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+
+    <view class="form-item mt-24">
+      <text class="label">密码</text>
+      <input class="input-box" type="password" placeholder="请输入密码（至少6位）"
+        model:value="{{form.password}}" data-field="password" bindinput="onInput"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+
+    <view class="form-item mt-24" hidden="{{mode !== 'register'}}">
+      <text class="label">确认密码</text>
+      <input class="input-box" type="password" placeholder="请再次输入密码"
+        model:value="{{form.confirm}}" data-field="confirm" bindinput="onInput"
+        adjust-position="{{true}}" cursor-spacing="30"/>
+    </view>
+
+    <view class="agree mt-24" bindtap="toggleAgree">
+      <view class="checkbox {{agree ? 'checked' : ''}}">{{agree ? '✓' : ''}}</view>
+      <text class="text-sm text-muted">我已阅读并同意<text class="text-primary">《用户协议》</text>和<text class="text-primary">《隐私政策》</text></text>
+    </view>
+
+    <button class="btn btn-primary btn-block mt-32" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">
+      {{mode === 'login' ? '登 录' : '注 册'}}
+    </button>
+  </view>
+
+  <view class="quick mt-24">
+    <view class="text-sm text-muted mb-16 text-center">🚀 快捷体验（毕业设计演示用）</view>
+    <view class="flex">
+      <button class="btn btn-outline flex-1 mr-16" bindtap="quickAdmin">填入管理员</button>
+      <button class="btn btn-outline flex-1 ml-16" bindtap="quickUser">随机注册学生</button>
+    </view>
+    <view class="text-sm text-muted mt-16 text-center">
+      管理员账号: admin / 123456
+    </view>
+  </view>
+</view>

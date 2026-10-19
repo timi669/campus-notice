@@ -1,0 +1,71 @@
+.page { padding: 24rpx; min-height: 100vh; }
+.mb-8 { margin-bottom: 16rpx; }
+.mb-16 { margin-bottom: 32rpx; }
+.mt-24 { margin-top: 48rpx; }
+.mb-32 { margin-bottom: 64rpx; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+.kpi-card {
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+}
+.kpi-card.span-2 { grid-column: span 2; }
+.kpi-1 { background: linear-gradient(135deg, #4F7DFB, #8FA8FF); }
+.kpi-2 { background: linear-gradient(135deg, #37C6C4, #8AE6E5); }
+.kpi-3 { background: linear-gradient(135deg, #FF976A, #FFBD99); }
+.kpi-4 { background: linear-gradient(135deg, #8F6FE8, #B9A0F5); }
+.kpi-5 { background: linear-gradient(135deg, #F56C6C, #FF9A9A); }
+.kpi-label { font-size: 24rpx; opacity: 0.9; }
+.kpi-value { font-size: 56rpx; font-weight: bold; margin: 8rpx 0 4rpx; line-height: 1.1; }
+.kpi-value.big { font-size: 72rpx; }
+.kpi-sub { font-size: 22rpx; opacity: 0.85; }
+
+.sec-title { font-size: 30rpx; }
+
+.bar-item { padding: 16rpx 0; border-bottom: 1rpx solid #f5f5f5; }
+.bar-item:last-child { border-bottom: none; }
+.bar-bg {
+  height: 16rpx;
+  background: #F2F3F5;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4F7DFB, #8FA8FF);
+  border-radius: 10rpx;
+  transition: width 0.6s ease;
+}
+
+.card { padding: 28rpx 24rpx; border-radius: 16rpx; }
+
+.hot-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  gap: 16rpx;
+}
+.hot-item:last-child { border-bottom: none; }
+.hot-rank {
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 12rpx;
+  background: #f0f0f0;
+  color: #999;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+.rank-1 { background: linear-gradient(135deg,#FF6A6A,#FF9F6A); color:#fff; }
+.rank-2 { background: linear-gradient(135deg,#FFB86A,#FFD66A); color:#fff; }
+.rank-3 { background: linear-gradient(135deg,#6ACCFF,#6A9FFF); color:#fff; }
+.arrow { color: #ccc; font-size: 40rpx; }
+.text-danger { color: #F56C6C; }

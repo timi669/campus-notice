@@ -1,0 +1,10 @@
+.page { padding: 24rpx; min-height: 100vh; padding-bottom: 40rpx; }
+.ml-16 { margin-left: 16rpx; }
+
+.notice-item { margin-bottom: 20rpx; padding: 24rpx; }
+.notice-head { display: flex; align-items: center; }
+.notice-title { line-height: 1.4; }
+.notice-summary { line-height: 1.5; }
+
+.item-actions { border-top: 1rpx solid #f0f0f0; padding-top: 20rpx; gap: 20rpx; }
+.item-actions .btn { font-size: 26rpx; }

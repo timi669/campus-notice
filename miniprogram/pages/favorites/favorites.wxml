@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="tip text-sm text-muted mb-16">⭐ 共收藏 {{total}} 篇公告</view>
+
+  <view class="notice-list">
+    <view class="notice-item card" wx:for="{{list}}" wx:key="id">
+      <view bindtap="goDetail" data-id="{{item.id}}">
+        <view class="notice-head flex-between">
+          <view class="tag tag-primary" wx:if="{{item.category}}">{{item.category.name}}</view>
+          <view class="tag tag-danger" wx:if="{{item.is_top}}">置顶</view>
+          <view class="text-sm text-muted flex-1 text-right">{{item.timeText}}</view>
+        </view>
+        <view class="notice-title text-lg font-bold mt-16 text-ellipsis-2">{{item.title}}</view>
+        <view class="notice-summary text-sm text-muted mt-8 text-ellipsis-2" wx:if="{{item.summary}}">{{item.summary}}</view>
+        <view class="notice-foot mt-16 text-sm text-muted">👁 {{item.views_count}}</view>
+      </view>
+      <view class="item-actions mt-16 flex">
+        <button class="btn btn-outline flex-1 text-sm" size="mini" catchtap="unFavorite" data-id="{{item.id}}">取消收藏</button>
+        <button class="btn btn-primary flex-1 text-sm ml-16" size="mini" catchtap="goDetail" data-id="{{item.id}}">查看详情</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">还没有收藏公告哦～<view class="text-sm text-muted mt-16">去首页发现感兴趣的吧</view></view>
+  <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore && list.length > 0}}">—— 没有更多了 ——</text>
+  </view>
+</view>

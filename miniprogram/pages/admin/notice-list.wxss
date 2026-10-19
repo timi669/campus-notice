@@ -1,0 +1,37 @@
+.page { padding: 24rpx 24rpx 140rpx; min-height: 100vh; }
+.ml-8 { margin-left: 16rpx; }
+
+.toolbar { padding: 20rpx 24rpx; }
+.filter-tabs { gap: 16rpx; }
+.ftab {
+  padding: 12rpx 28rpx;
+  background: #f2f3f5;
+  border-radius: 28rpx;
+  font-size: 26rpx;
+  color: #555;
+  margin-right: 16rpx;
+}
+.ftab.active { background: #4F7DFB; color: #fff; }
+.ftab-mini { display: flex; align-items: center; }
+
+.notice-item { padding: 24rpx; }
+.notice-head { display: flex; align-items: center; }
+.notice-title { font-size: 30rpx; line-height: 1.4; }
+.notice-summary { line-height: 1.5; }
+.mini-btn { padding: 0 24rpx; font-size: 24rpx; height: 56rpx; line-height: 56rpx; border-radius: 8rpx; display: inline-flex; align-items: center; justify-content: center; }
+
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 60rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4F7DFB, #8FA8FF);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(79,125,251,0.4);
+}
+.fab-icon { font-size: 52rpx; line-height: 1; margin-top: -4rpx; }

@@ -1,0 +1,41 @@
+<view class="page">
+  <scroll-view class="sidebar" scroll-y>
+    <view
+      class="side-item {{(item.id === currentId || (!item.id && !currentId)) ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="selectCategory"
+    >
+      <text class="icon">{{item.icon || '📌'}}</text>
+      <text class="name">{{item.name}}</text>
+      <text class="count text-sm">{{item.notice_count || 0}}</text>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="content" scroll-y bindscrolltolower="onReachBottom" refresher-enabled bindrefresherrefresh="onPullDownRefresh">
+    <view class="content-header">
+      <text class="title font-bold">{{currentName}}</text>
+      <text class="count text-sm text-muted">共 {{total}} 条</text>
+    </view>
+
+    <view class="notice-list">
+      <view class="notice-item card" wx:for="{{noticeList}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="notice-head flex-between">
+          <view class="tag tag-primary" wx:if="{{item.category}}">{{item.category.name}}</view>
+          <view class="tag tag-danger" wx:if="{{item.is_top}}">置顶</view>
+          <view class="text-sm text-muted flex-1 text-right">{{item.timeText}}</view>
+        </view>
+        <view class="notice-title text-lg font-bold mt-16 text-ellipsis-2">{{item.title}}</view>
+        <view class="notice-summary text-sm text-muted mt-8 text-ellipsis-2" wx:if="{{item.summary}}">{{item.summary}}</view>
+        <view class="notice-foot mt-16 text-sm text-muted">👁 {{item.views_count}}</view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!loading && noticeList.length === 0}}">该分类暂无公告</view>
+    <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{noMore && noticeList.length > 0}}">—— 没有更多了 ——</text>
+    </view>
+  </scroll-view>
+</view>

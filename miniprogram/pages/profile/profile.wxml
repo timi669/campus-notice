@@ -1,0 +1,85 @@
+<view class="page">
+  <!-- 未登录 -->
+  <view class="header unlogin" wx:if="{{!isLogin}}" bindtap="goLogin">
+    <view class="avatar-wrap">
+      <view class="avatar">👤</view>
+    </view>
+    <view class="info">
+      <view class="name text-lg font-bold">点击登录 / 注册</view>
+      <view class="desc text-sm text-muted">登录后解锁收藏、发布等功能</view>
+    </view>
+    <text class="arrow">›</text>
+  </view>
+
+  <!-- 已登录 -->
+  <view class="header logined" wx:else>
+    <view class="avatar-wrap">
+      <view class="avatar">
+        <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" mode="aspectFill"/>
+        <block wx:else>{{isAdmin ? '🎩' : '🙂'}}</block>
+      </view>
+    </view>
+    <view class="info">
+      <view class="name text-lg font-bold">
+        {{userInfo.nickname || userInfo.username}}
+        <view class="tag tag-primary ml-8" wx:if="{{isAdmin}}">管理员</view>
+        <view class="tag tag-success ml-8" wx:else>学生</view>
+      </view>
+      <view class="desc text-sm text-muted mt-8">账号：{{userInfo.username}}</view>
+    </view>
+  </view>
+
+  <!-- 管理员快捷入口 -->
+  <view class="card admin-entry mt-24" wx:if="{{isAdmin}}" bindtap="goAdminHome">
+    <view class="flex flex-between">
+      <view>
+        <view class="text-lg font-bold">🎛️ 管理控制台</view>
+        <view class="text-sm text-muted mt-8">发布公告 · 管理分类 · 查看数据</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="card menu-card mt-24">
+    <view class="menu-item" wx:for="{{menu}}" wx:key="key"
+      wx:if="{{!item.adminOnly || isAdmin}}"
+      data-key="{{item.key}}"
+      data-admin="{{item.adminOnly}}"
+      bindtap="onMenuTap">
+      <view class="m-icon">{{item.icon}}</view>
+      <view class="flex-1">
+        <view class="m-title">{{item.title}}</view>
+        <view class="m-desc text-sm text-muted">{{item.desc}}</view>
+      </view>
+      <view class="badge" wx:if="{{item.key === 'notifications' && unreadCount > 0}}">{{unreadCount}}</view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 管理员菜单 -->
+  <view class="card menu-card mt-24" wx:if="{{isAdmin}}">
+    <view class="section-title mb-16 text-sm text-muted">🛠️ 管理员功能</view>
+    <view class="menu-item" wx:for="{{adminMenu}}" wx:key="key"
+      data-key="{{item.key}}" bindtap="onMenuTap">
+      <view class="m-icon">{{item.icon}}</view>
+      <view class="flex-1">
+        <view class="m-title">{{item.title}}</view>
+        <view class="m-desc text-sm text-muted">{{item.desc}}</view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="card menu-card mt-24" wx:if="{{isLogin}}">
+    <view class="section-title mb-16 text-sm text-muted">⚙️ 账号设置</view>
+    <view class="menu-item" wx:for="{{settings}}" wx:key="key" data-key="{{item.key}}" bindtap="onMenuTap">
+      <view class="m-icon">{{item.icon}}</view>
+      <view class="flex-1"><view class="m-title">{{item.title}}</view></view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <button class="btn btn-outline mt-32 mb-32" wx:if="{{isLogin}}" bindtap="logout">退出登录</button>
+</view>
