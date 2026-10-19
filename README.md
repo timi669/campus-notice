@@ -44,7 +44,7 @@ campus-notice/
 │   │   ├── upload.py             # 图片上传接口
 │   │   ├── notification.py       # 站内通知接口
 │   │   └── operation_log.py      # 操作日志查询接口
-│   ├── tests/                    # pytest 单元测试（55 个用例）
+│   ├── tests/                    # pytest 单元测试（62 个用例）
 │   │   ├── conftest.py           # 独立测试库 campus_notice_test + 夹具
 │   │   ├── test_auth.py / test_user.py / test_category.py
 │   │   ├── test_notice.py / test_comment.py / test_like.py
@@ -85,6 +85,8 @@ campus-notice/
 │           ├── notice-list/      # 公告管理
 │           ├── category-manage/  # 分类管理
 │           ├── user-manage/      # 用户管理
+│           ├── operation-log/    # 操作日志（审计）
+│           ├── export/           # 数据导出（CSV）
 │           └── stats/            # 数据统计
 │
 └── sql/
@@ -230,7 +232,9 @@ docker-compose up -d --build
 | 公告管理 | 全部/已发布/草稿、只看我筛选、编辑/删除操作、浮动 + 按钮 |
 | 分类管理 | 新建/编辑/禁用/删除，支持 emoji 图标，排序值控制顺序 |
 | 用户管理 | 关键词搜索、角色过滤、管理员升降级、删除用户（非本人） |
-| 数据统计 | KPI 卡片 + 分类公告分布进度条 + 热门 Top5 + 最新动态 |
+| 操作日志 | 查看系统审计日志，按登录/新增/修改/删除/导出筛选，支持分页 |
+| 数据导出 | 一键导出用户列表 / 公告列表 CSV，自动复制到剪贴板，可粘贴到 Excel |
+| 数据统计 | KPI 卡片（含收藏/点赞/评论）+ 分类公告分布进度条 + 热门 Top5 + 最新动态 |
 
 ---
 
@@ -286,10 +290,15 @@ docker-compose up -d --build
 | POST | `/` | 发布评论（body: `notice_id` + `content`） | 任意已登录 |
 | DELETE | `/{id}` | 删除评论（评论者本人或管理员） | 任意已登录 |
 
+### 操作日志模块 `/api/operation-logs`
+| 方法 | 路径 | 说明 | 鉴权 |
+|------|------|------|------|
+| GET  | `/` | 操作日志列表（支持 user_id / action / target_type 过滤、分页） | 管理员 |
+
 ### 统计模块 `/api/stats`
 | 方法 | 路径 | 说明 | 鉴权 |
 |------|------|------|------|
-| GET  | `/` | 概览统计：各计数 + 最新/热门 + 分类分布 | 管理员 |
+| GET  | `/` | 概览统计：各计数（含评论/点赞）+ 最新/热门 + 分类分布 | 管理员 |
 
 ### 文件上传模块 `/api/upload`
 | 方法 | 路径 | 说明 | 鉴权 |
@@ -317,7 +326,7 @@ docker-compose up -d --build
 - **配置管理：** pydantic-settings + .env
 - **CORS：** 内置中间件，开发默认放开跨域
 - **部署：** Docker + docker-compose + Nginx 反向代理
-- **测试：** pytest 9 + httpx（FastAPI TestClient），55 个用例全通过
+- **测试：** pytest 9 + httpx（FastAPI TestClient），62 个用例全通过
 
 ### 5.2 前端技术栈
 - 微信小程序原生框架（WXML / WXSS / JS）
@@ -336,7 +345,7 @@ docker-compose up -d --build
 7. **浏览量原子更新：** 使用 SQL `UPDATE ... SET views_count = views_count + 1` 避免并发竞态
 8. **密码强度：** 注册与改密时强制 6-50 位且包含字母和数字
 9. **前后端约定：** 统一响应 `{ code, message, data }`，0 表示成功
-10. **单元测试：** pytest + TestClient，使用独立测试库 `campus_notice_test`，覆盖认证/公告/评论/点赞/通知/日志/权限共 55 个用例
+10. **单元测试：** pytest + TestClient，使用独立测试库 `campus_notice_test`，覆盖认证/公告/评论/点赞/通知/日志/权限共 62 个用例
 
 ---
 

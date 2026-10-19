@@ -142,6 +142,9 @@ const api = {
   commentList: (noticeId, p) => get('/api/comments', { notice_id: noticeId, ...(p || {}) }),
   commentCreate: (noticeId, content) => post('/api/comments', { notice_id: noticeId, content }),
   commentDelete: (id) => del(`/api/comments/${id}`),
+
+  // operation logs（管理员）
+  operationLogList: (p) => get('/api/operation-logs', p),
 };
 
 /**
@@ -179,6 +182,37 @@ function uploadFile(filePath) {
   });
 }
 
+/**
+ * 下载 CSV 导出内容（管理员）
+ * 小程序无法直接打开 CSV 文件，这里以文本方式取回，供复制到剪贴板后粘贴到 Excel。
+ * @param {string} path 接口路径，如 /api/users/export.csv
+ * @returns {Promise<string>} CSV 文本
+ */
+function exportCsv(path) {
+  return new Promise((resolve, reject) => {
+    const token = auth.getToken();
+    wx.request({
+      url: config.baseUrl + path,
+      method: 'GET',
+      header: token ? { Authorization: 'Bearer ' + token } : {},
+      dataType: 'text', // 关键：不按 JSON 解析，直接拿原始 CSV 文本
+      timeout: 20000,
+      success: (res) => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res.data || '');
+        } else {
+          wx.showToast({ title: '导出失败（' + res.statusCode + '）', icon: 'none' });
+          reject(res);
+        }
+      },
+      fail: (err) => {
+        wx.showToast({ title: '网络连接失败', icon: 'none' });
+        reject(err);
+      },
+    });
+  });
+}
+
 module.exports = {
   request,
   get,
@@ -186,5 +220,6 @@ module.exports = {
   put,
   del,
   uploadFile,
+  exportCsv,
   api,
 };

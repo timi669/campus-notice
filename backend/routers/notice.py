@@ -228,6 +228,53 @@ def hot_keywords(
     return [r.keyword for r in rows]
 
 
+@router.get("/export.csv", summary="导出公告列表 CSV（管理员）")
+def export_notices(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    """导出所有公告为 CSV 文件。
+
+    注意：本路由必须定义在 `/{notice_id}` 之前，否则 "export.csv" 会被当作 ID 解析而报 422。
+    """
+    notices = (
+        db.query(Notice)
+        .options(joinedload(Notice.category), joinedload(Notice.author))
+        .order_by(desc(Notice.created_at))
+        .all()
+    )
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["ID", "标题", "分类", "作者", "浏览量", "是否置顶", "状态", "创建时间"])
+    for n in notices:
+        writer.writerow([
+            n.id,
+            n.title,
+            n.category.name if n.category else "",
+            n.author.username if n.author else "",
+            n.views_count,
+            "是" if n.is_top else "否",
+            "已发布" if n.status == 1 else "草稿",
+            n.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        ])
+
+    output.seek(0)
+    headers = {
+        "Content-Disposition": "attachment; filename=notices.csv",
+        "Content-Type": "text/csv; charset=utf-8",
+    }
+
+    log_operation(
+        db, user_id=current_user.id, username=current_user.username,
+        action="export", target_type="notice", detail="导出公告列表CSV",
+        ip=_get_client_ip(request),
+    )
+
+    return StreamingResponse(iter([output.getvalue()]), headers=headers)
+
+
 @router.get("/{notice_id}", response_model=NoticeResponse, summary="公告详情")
 def get_notice(
     notice_id: int,
@@ -450,12 +497,14 @@ def toggle_like(
     if like:
         db.delete(like)
         db.commit()
+        _invalidate_notice_cache()
         like_count = db.query(NoticeLike).filter(NoticeLike.notice_id == notice_id).count()
         return LikeToggleResponse(liked=False, liked_id=None, like_count=like_count)
     like = NoticeLike(user_id=current_user.id, notice_id=notice_id)
     db.add(like)
     db.commit()
     db.refresh(like)
+    _invalidate_notice_cache()
     like_count = db.query(NoticeLike).filter(NoticeLike.notice_id == notice_id).count()
     return LikeToggleResponse(liked=True, liked_id=like.id, like_count=like_count)
 
@@ -560,47 +609,3 @@ def _get_client_ip(request: Request) -> str:
     if forwarded:
         return forwarded.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
-
-
-@router.get("/export.csv", summary="导出公告列表 CSV（管理员）")
-def export_notices(
-    request: Request,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    """导出所有公告为 CSV 文件"""
-    notices = (
-        db.query(Notice)
-        .options(joinedload(Notice.category), joinedload(Notice.author))
-        .order_by(desc(Notice.created_at))
-        .all()
-    )
-
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["ID", "标题", "分类", "作者", "浏览量", "是否置顶", "状态", "创建时间"])
-    for n in notices:
-        writer.writerow([
-            n.id,
-            n.title,
-            n.category.name if n.category else "",
-            n.author.username if n.author else "",
-            n.views_count,
-            "是" if n.is_top else "否",
-            "已发布" if n.status == 1 else "草稿",
-            n.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-        ])
-
-    output.seek(0)
-    headers = {
-        "Content-Disposition": "attachment; filename=notices.csv",
-        "Content-Type": "text/csv; charset=utf-8",
-    }
-
-    log_operation(
-        db, user_id=current_user.id, username=current_user.username,
-        action="export", target_type="notice", detail="导出公告列表CSV",
-        ip=_get_client_ip(request),
-    )
-
-    return StreamingResponse(iter([output.getvalue()]), headers=headers)

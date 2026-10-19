@@ -94,6 +94,42 @@ def list_users(
     }
 
 
+@router.get("/export.csv", summary="导出用户列表 CSV（管理员）")
+def export_users(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    """导出所有用户为 CSV 文件。
+
+    注意：本路由必须定义在 `/{user_id}` 之前，否则 "export.csv" 会被当作 user_id 解析而报 422。
+    """
+    users = db.query(User).order_by(desc(User.created_at)).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["ID", "用户名", "昵称", "角色", "创建时间"])
+    for u in users:
+        writer.writerow([
+            u.id, u.username, u.nickname or "", u.role,
+            u.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        ])
+
+    output.seek(0)
+    headers = {
+        "Content-Disposition": "attachment; filename=users.csv",
+        "Content-Type": "text/csv; charset=utf-8",
+    }
+
+    log_operation(
+        db, user_id=current_user.id, username=current_user.username,
+        action="export", target_type="user", detail="导出用户列表CSV",
+        ip=_get_client_ip(request),
+    )
+
+    return StreamingResponse(iter([output.getvalue()]), headers=headers)
+
+
 @router.get("/{user_id}", response_model=UserResponse, summary="获取用户详情（管理员）")
 def get_user(
     user_id: int,
@@ -161,39 +197,6 @@ def update_role(
     )
 
     return UserResponse.model_validate(user)
-
-
-@router.get("/export.csv", summary="导出用户列表 CSV（管理员）")
-def export_users(
-    request: Request,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
-):
-    """导出所有用户为 CSV 文件"""
-    users = db.query(User).order_by(desc(User.created_at)).all()
-
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["ID", "用户名", "昵称", "角色", "创建时间"])
-    for u in users:
-        writer.writerow([
-            u.id, u.username, u.nickname or "", u.role,
-            u.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-        ])
-
-    output.seek(0)
-    headers = {
-        "Content-Disposition": "attachment; filename=users.csv",
-        "Content-Type": "text/csv; charset=utf-8",
-    }
-
-    log_operation(
-        db, user_id=current_user.id, username=current_user.username,
-        action="export", target_type="user", detail="导出用户列表CSV",
-        ip=_get_client_ip(request),
-    )
-
-    return StreamingResponse(iter([output.getvalue()]), headers=headers)
 
 
 def _get_client_ip(request: Request) -> str:

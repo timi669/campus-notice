@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="card">
+    <view class="text-lg font-bold">📤 数据导出</view>
+    <view class="text-sm text-muted mt-8">把系统数据导出为 CSV，方便论文统计与备份</view>
+  </view>
+
+  <view class="export-item card mt-24">
+    <view class="flex-between">
+      <view>
+        <view class="font-bold">👥 用户列表</view>
+        <view class="text-sm text-muted mt-8">ID / 用户名 / 昵称 / 角色 / 创建时间</view>
+      </view>
+      <button class="btn btn-primary mini" size="mini" loading="{{exporting}}" bindtap="exportUsers">导出</button>
+    </view>
+  </view>
+
+  <view class="export-item card mt-24">
+    <view class="flex-between">
+      <view>
+        <view class="font-bold">📢 公告列表</view>
+        <view class="text-sm text-muted mt-8">ID / 标题 / 分类 / 作者 / 浏览量 / 置顶 / 状态 / 时间</view>
+      </view>
+      <button class="btn btn-primary mini" size="mini" loading="{{exporting}}" bindtap="exportNotices">导出</button>
+    </view>
+  </view>
+
+  <view class="card mt-24" wx:if="{{lastResult}}">
+    <view class="font-bold">✅ 上次导出</view>
+    <view class="text-sm mt-8">类型：{{lastResult.title}}</view>
+    <view class="text-sm mt-8">数据行数：{{lastResult.lines}} 行 · 字符数：{{lastResult.chars}}</view>
+    <view class="text-sm text-muted mt-8">内容已复制到剪贴板，可直接粘贴到 Excel / WPS。</view>
+  </view>
+
+  <view class="card mt-24">
+    <view class="font-bold mb-16">💡 使用说明</view>
+    <view class="tip-row text-sm" wx:for="{{tips}}" wx:key="*this">· {{item}}</view>
+  </view>
+</view>

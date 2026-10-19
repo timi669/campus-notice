@@ -1,0 +1,36 @@
+.page { padding: 24rpx; min-height: 100vh; }
+.mb-16 { margin-bottom: 32rpx; }
+.mb-24 { margin-bottom: 48rpx; }
+
+.filter-scroll { white-space: nowrap; }
+.filter-tabs { display: inline-flex; gap: 16rpx; }
+.ftab {
+  padding: 10rpx 28rpx;
+  border-radius: 30rpx;
+  background: #F2F3F5;
+  color: #666;
+  font-size: 26rpx;
+}
+.ftab.active {
+  background: #4F7DFB;
+  color: #fff;
+}
+
+.log-item { padding: 24rpx; }
+.log-detail { color: #444; word-break: break-all; }
+
+.act-badge {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  margin-right: 16rpx;
+  background: #F2F3F5;
+  color: #666;
+}
+.act-login { background: #E8F0FF; color: #4F7DFB; }
+.act-create { background: #E7F9EF; color: #09BB07; }
+.act-update { background: #FFF2E8; color: #FF976A; }
+.act-delete { background: #FFEBEB; color: #F56C6C; }
+.act-update_role { background: #F0EAFF; color: #8F6FE8; }
+.act-export { background: #E6F7F7; color: #37C6C4; }

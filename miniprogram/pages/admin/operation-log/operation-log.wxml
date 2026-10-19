@@ -1,0 +1,40 @@
+<view class="page">
+  <view class="card mb-24">
+    <view class="flex-between mb-16">
+      <text class="font-bold">📝 系统操作审计</text>
+      <text class="text-sm text-muted">共 {{total}} 条</text>
+    </view>
+    <scroll-view scroll-x class="filter-scroll">
+      <view class="filter-tabs">
+        <view
+          class="ftab {{actionFilter === item.key ? 'active' : ''}}"
+          wx:for="{{actionTabs}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="filterAction">{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="log-item card mb-16" wx:for="{{list}}" wx:key="id">
+    <view class="flex-between">
+      <view class="flex">
+        <view class="act-badge {{item.actionClass}}">{{item.actionText}}</view>
+        <text class="font-bold">{{item.username}}</text>
+      </view>
+      <text class="text-sm text-muted">{{item.timeText}}</text>
+    </view>
+    <view class="text-sm mt-8 log-detail">{{item.detail || '—'}}</view>
+    <view class="text-sm text-muted mt-8 flex-between">
+      <text wx:if="{{item.target_type}}">对象：{{item.target_type}}{{item.target_id ? ' #' + item.target_id : ''}}</text>
+      <text wx:else>对象：—</text>
+      <text>IP：{{item.ip || '未知'}}</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无操作日志</view>
+  <view class="loading-more text-sm text-muted mt-24 mb-32 text-center" wx:if="{{loading || noMore}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore && list.length > 0}}">—— 没有更多了 ——</text>
+  </view>
+</view>

@@ -21,6 +21,8 @@
 .kpi-3 { background: linear-gradient(135deg, #FF976A, #FFBD99); }
 .kpi-4 { background: linear-gradient(135deg, #8F6FE8, #B9A0F5); }
 .kpi-5 { background: linear-gradient(135deg, #F56C6C, #FF9A9A); }
+.kpi-6 { background: linear-gradient(135deg, #FF6A9B, #FF9AB8); }
+.kpi-7 { background: linear-gradient(135deg, #3AC2A5, #7FE0CB); }
 .kpi-label { font-size: 24rpx; opacity: 0.9; }
 .kpi-value { font-size: 56rpx; font-weight: bold; margin: 8rpx 0 4rpx; line-height: 1.1; }
 .kpi-value.big { font-size: 72rpx; }

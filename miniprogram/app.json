@@ -13,6 +13,8 @@
     "pages/admin/notice-list",
     "pages/admin/category-manage",
     "pages/admin/user-manage",
+    "pages/admin/operation-log",
+    "pages/admin/export",
     "pages/admin/stats"
   ],
   "window": {

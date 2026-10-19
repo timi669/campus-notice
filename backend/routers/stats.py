@@ -8,6 +8,8 @@ from models.user import User
 from models.notice import Notice
 from models.category import Category
 from models.favorite import Favorite
+from models.comment import Comment
+from models.notice_like import NoticeLike
 from utils.auth import require_admin
 from utils import cache as cache_util
 
@@ -30,6 +32,8 @@ def overview(_=Depends(require_admin), db: Session = Depends(get_db)):
     draft_count = db.query(func.count(Notice.id)).filter(Notice.status == 0).scalar() or 0
     category_count = db.query(func.count(Category.id)).filter(Category.status == 1).scalar() or 0
     favorite_count = db.query(func.count(Favorite.id)).scalar() or 0
+    comment_count = db.query(func.count(Comment.id)).scalar() or 0
+    like_count = db.query(func.count(NoticeLike.id)).scalar() or 0
     views_sum = db.query(func.sum(Notice.views_count)).scalar() or 0
 
     recent_notices = (
@@ -67,6 +71,8 @@ def overview(_=Depends(require_admin), db: Session = Depends(get_db)):
         "draft_count": draft_count,
         "category_count": category_count,
         "favorite_count": favorite_count,
+        "comment_count": comment_count,
+        "like_count": like_count,
         "views_sum": int(views_sum),
         "recent_notices": [
             {"id": n.id, "title": n.title, "created_at": n.created_at, "views_count": n.views_count}

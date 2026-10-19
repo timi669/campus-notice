@@ -11,8 +11,15 @@ from models.notice import Notice
 from models.comment import Comment
 from schemas.comment import CommentCreate, CommentResponse, CommentListResponse
 from utils.auth import get_current_user
+from utils import cache as cache_util
 
 router = APIRouter(prefix="/api/comments", tags=["评论"])
+
+CACHE_KEY_STATS = "stats:overview"
+
+
+def _invalidate_stats_cache():
+    cache_util.delete(CACHE_KEY_STATS)
 
 
 @router.get("", response_model=CommentListResponse, summary="公告评论列表")
@@ -61,6 +68,7 @@ def create_comment(
     db.commit()
     db.refresh(comment)
     comment.user  # 加载 user 关系
+    _invalidate_stats_cache()
     return CommentResponse.model_validate(comment)
 
 
@@ -79,3 +87,4 @@ def delete_comment(
 
     db.delete(comment)
     db.commit()
+    _invalidate_stats_cache()

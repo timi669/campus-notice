@@ -20,6 +20,16 @@
       <view class="kpi-value">{{stats.favorite_count}}</view>
       <view class="kpi-sub">学生收藏记录</view>
     </view>
+    <view class="kpi-card kpi-6">
+      <view class="kpi-label">❤️ 点赞总数</view>
+      <view class="kpi-value">{{stats.like_count}}</view>
+      <view class="kpi-sub">公告点赞次数</view>
+    </view>
+    <view class="kpi-card kpi-7">
+      <view class="kpi-label">💬 评论总数</view>
+      <view class="kpi-value">{{stats.comment_count}}</view>
+      <view class="kpi-sub">用户评论条数</view>
+    </view>
     <view class="kpi-card kpi-5 span-2">
       <view class="kpi-label">👁 全站浏览量</view>
       <view class="kpi-value big">{{stats.views_sum}}</view>

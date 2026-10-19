@@ -13,6 +13,8 @@ Page({
       draft_count: 0,
       category_count: 0,
       favorite_count: 0,
+      comment_count: 0,
+      like_count: 0,
       views_sum: 0,
     },
     category_stats: [],
@@ -42,6 +44,8 @@ Page({
           draft_count: data.draft_count || 0,
           category_count: data.category_count || 0,
           favorite_count: data.favorite_count || 0,
+          comment_count: data.comment_count || 0,
+          like_count: data.like_count || 0,
           views_sum: data.views_sum || 0,
         },
         category_stats: (data.category_stats || []).map(c => ({

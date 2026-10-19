@@ -1,0 +1,9 @@
+.page { padding: 24rpx; min-height: 100vh; }
+.mt-24 { margin-top: 48rpx; }
+.mt-8 { margin-top: 16rpx; }
+.mb-16 { margin-bottom: 32rpx; }
+
+.export-item { padding: 28rpx 24rpx; }
+.mini { flex: none; }
+
+.tip-row { color: #666; padding: 8rpx 0; }
