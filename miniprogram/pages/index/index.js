@@ -23,6 +23,7 @@ Page({
 
   onLoad() {
     this.loadCategories();
+    this.loadBanners();
     this.loadTopNotices();
     this.loadNoticeList(true);
   },
@@ -37,6 +38,7 @@ Page({
     this.setData({ page: 1, noMore: false });
     Promise.all([
       this.loadCategories(true),
+      this.loadBanners(true),
       this.loadTopNotices(true),
       this.loadNoticeList(true),
     ]).then(() => wx.stopPullDownRefresh());
@@ -58,14 +60,26 @@ Page({
     }
   },
 
+  async loadBanners(silent) {
+    try {
+      const list = await api.bannerList(false);
+      const banner = (list || []).map(b => ({
+        id: b.id,
+        title: b.title || '',
+        image_full: resolveUrl(b.image),
+        link_type: b.link_type,
+        link_value: b.link_value,
+      }));
+      this.setData({ banner });
+    } catch (e) {
+      if (!silent) console.error('loadBanners', e);
+    }
+  },
+
   async loadTopNotices(silent) {
     try {
       const list = await api.topNotices(5);
-      const banner = (list || []).slice(0, 5).map(n => ({
-        id: n.id,
-        title: n.title,
-      }));
-      this.setData({ topNotices: list || [], banner });
+      this.setData({ topNotices: list || [] });
     } catch (e) {
       if (!silent) console.error('loadTopNotices', e);
     }
@@ -124,6 +138,19 @@ Page({
   goDetail(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/detail/detail?id=${id}` });
+  },
+
+  goBanner(e) {
+    const b = this.data.banner[e.currentTarget.dataset.index];
+    if (!b) return;
+    if (b.link_type === 'notice' && b.link_value) {
+      wx.navigateTo({ url: `/pages/detail/detail?id=${b.link_value}` });
+    } else if (b.link_type === 'url' && b.link_value) {
+      wx.setClipboardData({
+        data: b.link_value,
+        success: () => wx.showToast({ title: '链接已复制', icon: 'none' }),
+      });
+    }
   },
 
   goSearch() {

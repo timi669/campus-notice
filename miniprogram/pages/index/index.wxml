@@ -8,10 +8,22 @@
     </view>
   </view>
 
-  <!-- 置顶轮播 -->
-  <view class="banner-wrap" wx:if="{{topNotices.length > 0}}">
+  <!-- 轮播（优先后台配置的 banner，否则回退置顶公告） -->
+  <view class="banner-wrap" wx:if="{{banner.length > 0}}">
     <swiper class="banner" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
-      <swiper-item wx:for="{{banner}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <swiper-item wx:for="{{banner}}" wx:key="id" data-index="{{index}}" bindtap="goBanner">
+        <view class="banner-item">
+          <image wx:if="{{item.image_full}}" class="banner-img" src="{{item.image_full}}" mode="aspectFill" />
+          <view class="banner-mask"></view>
+          <view class="banner-title text-ellipsis" wx:if="{{item.title}}">{{item.title}}</view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <view class="banner-wrap" wx:elif="{{topNotices.length > 0}}">
+    <swiper class="banner" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+      <swiper-item wx:for="{{topNotices}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
         <view class="banner-item">
           <view class="banner-title text-ellipsis">{{item.title}}</view>
           <view class="banner-tag">置顶</view>

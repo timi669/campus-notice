@@ -1,0 +1,78 @@
+<view class="page">
+  <view class="header card flex-between mb-24">
+    <view>
+      <view class="font-bold text-lg">🖼️ 轮播图管理</view>
+      <view class="text-sm text-muted mt-8">首页顶部轮播图（图片 + 跳转 + 排序 + 启用）</view>
+    </view>
+    <button class="btn btn-primary" size="mini" bindtap="openCreate">+ 新建</button>
+  </view>
+
+  <view class="banner-item card mb-16" wx:for="{{list}}" wx:key="id">
+    <image class="banner-thumb" src="{{item.image_full}}" mode="aspectFill" />
+    <view class="flex-1" style="margin-left:20rpx;">
+      <view class="flex-between">
+        <text class="font-bold text-ellipsis">{{item.title || '未命名'}}</text>
+        <view class="tag {{item.status === 1 ? 'tag-success' : 'tag-warning'}}">{{item.status === 1 ? '启用' : '禁用'}}</view>
+      </view>
+      <view class="text-sm text-muted mt-8">跳转：{{item.link_type === 'notice' ? '公告 #' + item.link_value : (item.link_type === 'url' ? item.link_value : '无')}}</view>
+      <view class="text-sm text-muted mt-8">排序：{{item.sort_order}}</view>
+      <view class="flex mt-16">
+        <button class="mini-btn btn-outline flex-1" size="mini" data-id="{{item.id}}" bindtap="openEdit">编辑</button>
+        <button class="mini-btn btn-outline flex-1 ml-8" size="mini" data-id="{{item.id}}" bindtap="toggleStatus">
+          {{item.status === 1 ? '禁用' : '启用'}}
+        </button>
+        <button class="mini-btn btn-danger flex-1 ml-8" size="mini" data-id="{{item.id}}" bindtap="deleteBanner">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && list.length === 0}}">暂无轮播图，点右上角"新建"添加</view>
+
+  <!-- 编辑弹窗 -->
+  <view class="modal-mask" wx:if="{{showEdit}}" catchtap="closeEdit">
+    <view class="modal" catchtap="noOp">
+      <view class="modal-title font-bold text-lg">{{editMode === 'create' ? '新建轮播图' : '编辑轮播图'}}</view>
+
+      <view class="field mt-24">
+        <text class="label">轮播图片</text>
+        <view class="flex align-items-center">
+          <image wx:if="{{formImageFull}}" class="form-img" src="{{formImageFull}}" mode="aspectFill" />
+          <view wx:else class="form-img form-img-empty flex-center">暂无图</view>
+          <button class="btn btn-outline ml-16" size="mini" loading="{{uploading}}" bindtap="chooseImage">上传图片</button>
+        </view>
+      </view>
+
+      <view class="field mt-24">
+        <text class="label">标题</text>
+        <input class="input-box" placeholder="轮播图标题（选填）" value="{{form.title}}" data-field="title" bindinput="onField" />
+      </view>
+
+      <view class="field mt-24">
+        <text class="label">跳转类型</text>
+        <view class="flex">
+          <view class="ltab {{form.link_type === item.key ? 'active' : ''}}" wx:for="{{linkTypes}}" wx:key="key" data-key="{{item.key}}" bindtap="pickLinkType">{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="field mt-24" wx:if="{{form.link_type !== 'none'}}">
+        <text class="label">{{form.link_type === 'notice' ? '公告ID' : '外链URL'}}</text>
+        <input class="input-box" placeholder="{{form.link_type === 'notice' ? '填入公告ID，如 1' : 'https://...'}}" value="{{form.link_value}}" data-field="link_value" bindinput="onField" />
+      </view>
+
+      <view class="field mt-24">
+        <text class="label">排序值（越小越靠前）</text>
+        <input class="input-box" type="number" value="{{form.sort_order}}" data-field="sort_order" bindinput="onField" />
+      </view>
+
+      <view class="field mt-24 flex-between">
+        <text class="label">启用</text>
+        <switch checked="{{form.status === 1}}" bindchange="onFormStatus" color="#4F7DFB" />
+      </view>
+
+      <view class="modal-footer mt-32 flex">
+        <button class="btn btn-outline flex-1" bindtap="closeEdit">取消</button>
+        <button class="btn btn-primary flex-1 ml-16" bindtap="submitForm">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

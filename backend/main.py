@@ -20,6 +20,7 @@ def init_db_tables():
     import models.search_log
     import models.comment
     import models.notice_like
+    import models.banner
     Base.metadata.create_all(bind=engine)
 
 
@@ -110,6 +111,7 @@ from routers.upload import router as upload_router
 from routers.notification import router as notification_router
 from routers.operation_log import router as operation_log_router
 from routers.comment import router as comment_router
+from routers.banner import router as banner_router
 
 app.include_router(auth_router)
 app.include_router(user_router)
@@ -120,6 +122,7 @@ app.include_router(upload_router)
 app.include_router(notification_router)
 app.include_router(operation_log_router)
 app.include_router(comment_router)
+app.include_router(banner_router)
 
 # 挂载上传文件静态目录
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")

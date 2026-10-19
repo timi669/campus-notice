@@ -2,6 +2,27 @@
 const config = require('./config.js');
 const auth = require('./auth.js');
 
+/**
+ * 从后端响应中提取可读的错误信息。
+ * FastAPI 校验错误返回 { detail: [{msg, loc, ...}] }，业务错误返回 { detail: "字符串" }。
+ * 这里统一转成一句人能看懂的话，避免把数组/对象塞进 toast 导致无提示。
+ */
+function extractError(data) {
+  if (!data) return '请求失败';
+  if (typeof data === 'string') return data;
+  // FastAPI 校验错误：detail 是数组
+  if (Array.isArray(data.detail)) {
+    const first = data.detail[0];
+    if (first && first.msg) return first.msg;
+    return '请求参数有误';
+  }
+  // 业务错误：detail 是字符串
+  if (data.detail && typeof data.detail === 'string') return data.detail;
+  // 自定义结构 { message }
+  if (data.message) return data.message;
+  return '请求失败';
+}
+
 function request(options) {
   return new Promise((resolve, reject) => {
     const token = auth.getToken();
@@ -17,6 +38,8 @@ function request(options) {
     if (url && !/^https?:\/\//.test(url)) {
       url = config.baseUrl + url;
     }
+    // 登录/注册接口自身返回 401（如密码错误）时，不应触发全局“请重新登录”清态跳转
+    const isAuthRequest = /\/api\/auth\/(login|register|login-oauth)(\?|$)/.test(options.url || '');
 
     wx.request({
       url,
@@ -27,6 +50,12 @@ function request(options) {
       success: (res) => {
         const data = res.data;
         if (res.statusCode === 401) {
+          if (isAuthRequest) {
+            // 登录失败：直接提示具体原因，不清 token、不跳转
+            wx.showToast({ title: extractError(data), icon: 'none' });
+            reject(data || { code: 401, message: '用户名或密码错误' });
+            return;
+          }
           auth.clearAuth();
           const app = getApp();
           if (app) {
@@ -45,7 +74,7 @@ function request(options) {
           return;
         }
         if (res.statusCode === 403) {
-          wx.showToast({ title: '没有权限', icon: 'none' });
+          wx.showToast({ title: extractError(data) || '没有权限', icon: 'none' });
           reject(data || { code: 403, message: '没有权限' });
           return;
         }
@@ -54,20 +83,15 @@ function request(options) {
             if (data.code === 0 || data.code === 200) {
               resolve(data.data !== undefined ? data.data : data);
             } else {
-              wx.showToast({
-                title: data.message || '请求失败',
-                icon: 'none',
-              });
+              wx.showToast({ title: data.message || '请求失败', icon: 'none' });
               reject(data);
             }
           } else {
             resolve(data);
           }
         } else {
-          wx.showToast({
-            title: (data && (data.message || data.detail)) || `请求错误(${res.statusCode})`,
-            icon: 'none',
-          });
+          // 4xx/5xx：提取可读错误
+          wx.showToast({ title: extractError(data) || `请求错误(${res.statusCode})`, icon: 'none' });
           reject(data || { code: res.statusCode, message: '网络错误' });
         }
       },
@@ -145,6 +169,12 @@ const api = {
 
   // operation logs（管理员）
   operationLogList: (p) => get('/api/operation-logs', p),
+
+  // banners（轮播图）
+  bannerList: (includeDisabled = false) => get('/api/banners', { include_disabled: includeDisabled }),
+  bannerCreate: (d) => post('/api/banners', d),
+  bannerUpdate: (id, d) => put(`/api/banners/${id}`, d),
+  bannerDelete: (id) => del(`/api/banners/${id}`),
 };
 
 /**

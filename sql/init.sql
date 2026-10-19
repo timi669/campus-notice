@@ -105,6 +105,22 @@ CREATE TABLE `notice_like` (
   CONSTRAINT `fk_notice_like_notice` FOREIGN KEY (`notice_id`) REFERENCES `notice`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='点赞表';
 
+-- 轮播图表
+DROP TABLE IF EXISTS `banner`;
+CREATE TABLE `banner` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '轮播图ID',
+  `image` VARCHAR(255) NOT NULL COMMENT '图片URL',
+  `title` VARCHAR(200) DEFAULT NULL COMMENT '标题',
+  `link_type` VARCHAR(20) NOT NULL DEFAULT 'notice' COMMENT '跳转类型: notice/none/url',
+  `link_value` VARCHAR(255) DEFAULT NULL COMMENT '跳转目标（公告ID或外链URL）',
+  `sort_order` INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态: 1-启用, 0-禁用',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_sort` (`sort_order`),
+  INDEX `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='轮播图表';
+
 -- 站内通知表
 DROP TABLE IF EXISTS `notification`;
 CREATE TABLE `notification` (

@@ -27,7 +27,7 @@
 
     <view class="form-item mt-24">
       <text class="label">密码</text>
-      <input class="input-box" type="password" placeholder="请输入密码（至少6位）"
+      <input class="input-box" type="password" placeholder="6-50位，须含字母和数字"
         model:value="{{form.password}}" data-field="password" bindinput="onInput"
         adjust-position="{{true}}" cursor-spacing="30"/>
     </view>

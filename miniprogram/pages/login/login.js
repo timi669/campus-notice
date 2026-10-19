@@ -39,6 +39,10 @@ Page({
       wx.showToast({ title: '密码至少6位', icon: 'none' });
       return false;
     }
+    if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+      wx.showToast({ title: '密码须同时包含字母和数字', icon: 'none' });
+      return false;
+    }
     if (this.data.mode === 'register') {
       if (!nickname || nickname.trim().length < 1) {
         wx.showToast({ title: '请输入昵称', icon: 'none' });
@@ -95,12 +99,12 @@ Page({
 
   async quickUser() {
     try {
-      let username = 'student' + Math.floor(Math.random() * 1000);
+      let username = 'student' + Math.floor(Math.random() * 100000);
       this.setData({
         mode: 'register',
         'form.username': username,
-        'form.password': '123456',
-        'form.confirm': '123456',
+        'form.password': 'stu123456',
+        'form.confirm': 'stu123456',
         'form.nickname': '测试同学',
       });
     } catch (e) {

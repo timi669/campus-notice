@@ -13,8 +13,9 @@
     "pages/admin/notice-list",
     "pages/admin/category-manage",
     "pages/admin/user-manage",
-    "pages/admin/operation-log",
-    "pages/admin/export",
+    "pages/admin/operation-log/operation-log",
+    "pages/admin/export/export",
+    "pages/admin/banner-manage/banner-manage",
     "pages/admin/stats"
   ],
   "window": {

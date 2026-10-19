@@ -48,13 +48,17 @@
         <view class="a-icon" style="background:#F0EAFF;color:#8F6FE8;">📊</view>
         <view class="a-text">数据统计</view>
       </view>
-      <view class="action-item" data-path="/pages/admin/operation-log" bindtap="go">
+      <view class="action-item" data-path="/pages/admin/operation-log/operation-log" bindtap="go">
         <view class="a-icon" style="background:#E6F7F7;color:#37C6C4;">📝</view>
         <view class="a-text">操作日志</view>
       </view>
-      <view class="action-item" data-path="/pages/admin/export" bindtap="go">
+      <view class="action-item" data-path="/pages/admin/export/export" bindtap="go">
         <view class="a-icon" style="background:#FFF9EC;color:#D4A017;">📤</view>
         <view class="a-text">数据导出</view>
+      </view>
+      <view class="action-item" data-path="/pages/admin/banner-manage/banner-manage" bindtap="go">
+        <view class="a-icon" style="background:#FFEFF5;color:#FF6A9B;">🖼️</view>
+        <view class="a-text">轮播图管理</view>
       </view>
       <view class="action-item" data-path="/pages/index/index" bindtap="go">
         <view class="a-icon" style="background:#F5F7FA;color:#666;">🏠</view>

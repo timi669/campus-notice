@@ -65,6 +65,7 @@ def setup_db():
     import models.search_log  # noqa: F401
     import models.comment  # noqa: F401
     import models.notice_like  # noqa: F401
+    import models.banner  # noqa: F401
 
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
