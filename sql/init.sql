@@ -6,6 +6,9 @@ CREATE DATABASE IF NOT EXISTS campus_notice DEFAULT CHARACTER SET utf8mb4 COLLAT
 
 USE campus_notice;
 
+-- 重建表时临时关闭外键检查，避免 DROP 父表被外键约束阻挡
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- 用户表
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -74,6 +77,33 @@ CREATE TABLE `favorite` (
   CONSTRAINT `fk_favorite_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_favorite_notice` FOREIGN KEY (`notice_id`) REFERENCES `notice`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
+
+-- 评论表
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '评论ID',
+  `notice_id` INT NOT NULL COMMENT '关联公告ID',
+  `user_id` INT NOT NULL COMMENT '评论用户ID',
+  `content` TEXT NOT NULL COMMENT '评论内容',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
+  INDEX `idx_notice_id` (`notice_id`),
+  INDEX `idx_user_id` (`user_id`),
+  CONSTRAINT `fk_comment_notice` FOREIGN KEY (`notice_id`) REFERENCES `notice`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='评论表';
+
+-- 点赞表
+DROP TABLE IF EXISTS `notice_like`;
+CREATE TABLE `notice_like` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '点赞ID',
+  `user_id` INT NOT NULL COMMENT '点赞用户ID',
+  `notice_id` INT NOT NULL COMMENT '公告ID',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '点赞时间',
+  UNIQUE KEY `uk_user_notice_like` (`user_id`, `notice_id`),
+  INDEX `idx_notice_id` (`notice_id`),
+  CONSTRAINT `fk_notice_like_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_notice_like_notice` FOREIGN KEY (`notice_id`) REFERENCES `notice`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='点赞表';
 
 -- 站内通知表
 DROP TABLE IF EXISTS `notification`;
@@ -158,3 +188,6 @@ INSERT INTO `notice` (`title`, `content`, `summary`, `category_id`, `author_id`,
 ('2026年度国家奖学金评审工作启动', '各学院：2026年度国家奖学金评审工作即日起开始，申请条件、评审程序和材料报送要求详见学生处网站通知。请符合条件的同学于10月20日前提交申请材料。', '国家奖学金评审启动，申请截止10月20日，详见学生处通知。', 7, 1, 0, 1),
 
 ('关于选课系统开放的通知', '2026-2027学年第二学期选修课选课系统将于10月10日上午9:00开放，请同学们登录教务系统进行选课。选课截止时间为10月15日24:00，请务必在规定时间内完成。', '选课系统10月10日9:00开放，截止10月15日24:00，请及时完成选课。', 8, 1, 0, 1);
+
+-- 恢复外键检查
+SET FOREIGN_KEY_CHECKS = 1;

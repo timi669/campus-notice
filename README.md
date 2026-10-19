@@ -19,6 +19,8 @@ campus-notice/
 │   │   ├── category.py           # 公告分类表
 │   │   ├── notice.py             # 公告表
 │   │   ├── favorite.py           # 收藏表
+│   │   ├── comment.py            # 评论表
+│   │   ├── notice_like.py        # 点赞表
 │   │   ├── notification.py       # 站内通知表
 │   │   ├── operation_log.py      # 操作日志表（审计）
 │   │   └── search_log.py         # 搜索日志表（热门词统计）
@@ -27,6 +29,8 @@ campus-notice/
 │   │   ├── category.py
 │   │   ├── notice.py
 │   │   ├── favorite.py
+│   │   ├── comment.py
+│   │   ├── like.py
 │   │   ├── notification.py
 │   │   ├── operation_log.py
 │   │   └── common.py             # 通用响应结构
@@ -34,11 +38,18 @@ campus-notice/
 │   │   ├── auth.py               # 注册/登录/获取当前用户
 │   │   ├── user.py               # 用户管理（管理员）+ 注销
 │   │   ├── category.py           # 分类 CRUD
-│   │   ├── notice.py             # 公告 CRUD+搜索+收藏+置顶+热门词
+│   │   ├── notice.py             # 公告 CRUD+搜索+收藏+点赞+置顶+热门词
+│   │   ├── comment.py            # 评论列表/发布/删除
 │   │   ├── stats.py              # 数据统计概览
 │   │   ├── upload.py             # 图片上传接口
 │   │   ├── notification.py       # 站内通知接口
 │   │   └── operation_log.py      # 操作日志查询接口
+│   ├── tests/                    # pytest 单元测试（55 个用例）
+│   │   ├── conftest.py           # 独立测试库 campus_notice_test + 夹具
+│   │   ├── test_auth.py / test_user.py / test_category.py
+│   │   ├── test_notice.py / test_comment.py / test_like.py
+│   │   ├── test_notification.py / test_operation_log.py
+│   │   └── pytest.ini            # 位于 backend/ 根目录
 │   ├── utils/
 │   │   ├── auth.py               # JWT 令牌、密码哈希、权限依赖、登录限流
 │   │   ├── cache.py              # Redis 缓存工具（带内存降级）
@@ -62,7 +73,7 @@ campus-notice/
 │   └── pages/
 │       ├── index/                # 首页：轮播置顶+分类入口+公告列表
 │       ├── category/             # 分类浏览（左栏切换+分页）
-│       ├── detail/               # 公告详情（富文本+收藏+转发）
+│       ├── detail/               # 公告详情（富文本+点赞+收藏+评论+转发）
 │       ├── search/               # 搜索（历史/热门/分类过滤）
 │       ├── login/                # 登录/注册（快捷体验按钮）
 │       ├── profile/              # 个人中心+管理员入口
@@ -201,9 +212,11 @@ docker-compose up -d --build
 | 注册/登录 | 用户名+密码注册，JWT 鉴权，401 自动跳转登录 |
 | 首页 | 置顶公告轮播 + 8 分类快捷入口 + 最新/最热切换 + 无限分页 |
 | 分类浏览 | 左栏列表 + 右栏公告，按分类过滤，分页下拉加载 |
-| 公告详情 | 富文本、浏览量自增、收藏/取消、复制分享、微信转发 |
+| 公告详情 | 富文本、浏览量自增、点赞/取消（实时计数）、收藏/取消、评论区（发表/删除）、复制分享、微信转发 |
 | 搜索 | 关键词历史记录 + 热门词 + 分类过滤 + 最新/最热排序 |
 | 我的收藏 | 收藏列表 + 取消收藏 + 跳详情 |
+| 评论互动 | 公告详情页发表评论、删除自己的评论；管理员可删除任意评论 |
+| 点赞 | 公告点赞/取消，详情页与列表展示点赞数 |
 | 消息通知 | 管理员发布公告时自动推送站内通知，未读红点提示，支持标记已读 |
 | 个人中心 | 头像/昵称展示、修改昵称、修改密码（需校验旧密码）、退出登录 |
 
@@ -262,8 +275,16 @@ docker-compose up -d --build
 | PUT  | `/{id}` | 编辑公告 | 管理员 |
 | DELETE | `/{id}` | 删除公告 | 管理员 |
 | POST | `/{id}/favorite` | 收藏/取消 切换 | 任意已登录 |
+| POST | `/{id}/like` | 点赞/取消 切换（返回最新 like_count） | 任意已登录 |
 | GET  | `/my/favorites` | 我的收藏列表 | 任意已登录 |
 | GET  | `/my/published` | 我发布的公告（管理员） | 管理员 |
+
+### 评论模块 `/api/comments`
+| 方法 | 路径 | 说明 | 鉴权 |
+|------|------|------|------|
+| GET  | `/` | 某公告评论列表（`?notice_id=`、分页） | 否 |
+| POST | `/` | 发布评论（body: `notice_id` + `content`） | 任意已登录 |
+| DELETE | `/{id}` | 删除评论（评论者本人或管理员） | 任意已登录 |
 
 ### 统计模块 `/api/stats`
 | 方法 | 路径 | 说明 | 鉴权 |
@@ -296,6 +317,7 @@ docker-compose up -d --build
 - **配置管理：** pydantic-settings + .env
 - **CORS：** 内置中间件，开发默认放开跨域
 - **部署：** Docker + docker-compose + Nginx 反向代理
+- **测试：** pytest 9 + httpx（FastAPI TestClient），55 个用例全通过
 
 ### 5.2 前端技术栈
 - 微信小程序原生框架（WXML / WXSS / JS）
@@ -307,13 +329,14 @@ docker-compose up -d --build
 ### 5.3 关键设计点
 1. **密码安全：** 一律存 `pbkdf2_sha256` 哈希，不会保存明文；修改密码需校验旧密码
 2. **角色权限：** 基于 FastAPI Dependencies 的分层：`get_current_user` → `require_admin`
-3. **收藏联合唯一：** 数据库层 `UNIQUE(user_id, notice_id)` 保证不重复收藏
+3. **收藏/点赞联合唯一：** 数据库层 `UNIQUE(user_id, notice_id)` 保证不重复收藏/点赞
 4. **消息推送：** 管理员发布公告时自动给所有用户创建站内通知，支持未读计数与标记已读
 5. **Redis 缓存：** 置顶公告、分类列表、统计概览三个热点接口接入缓存，带 TTL 与失效机制；Redis 不可用时自动降级内存缓存
 6. **全文检索：** 搜索优先使用 MySQL FULLTEXT（ngram 分词），索引不存在时自动降级为 LIKE
 7. **浏览量原子更新：** 使用 SQL `UPDATE ... SET views_count = views_count + 1` 避免并发竞态
 8. **密码强度：** 注册与改密时强制 6-50 位且包含字母和数字
 9. **前后端约定：** 统一响应 `{ code, message, data }`，0 表示成功
+10. **单元测试：** pytest + TestClient，使用独立测试库 `campus_notice_test`，覆盖认证/公告/评论/点赞/通知/日志/权限共 55 个用例
 
 ---
 
@@ -321,11 +344,11 @@ docker-compose up -d --build
 
 1. **Swagger 截图：** `http://localhost:8000/docs` 可以直接作为论文中 API 接口章节截图。
 2. **功能演示流程建议：**
-   - 注册学生账号 → 浏览首页 → 分类 → 详情 → 收藏 → 搜索
+   - 注册学生账号 → 浏览首页 → 分类 → 详情 → 点赞 → 评论 → 收藏 → 搜索
    - 登录 admin → 控制台 → 发公告（选分类+置顶+上传封面图）→ 返回前台确认
    - 切回学生账号 → 个人中心查看消息通知红点 → 进入通知中心 → 标记已读
    - 分类管理 → 新增分类；用户管理 → 把刚注册的学生升为管理员再降回
-3. **论文数据模型部分：** 可直接参考 `backend/models/*.py` 画出 ER 图（7 张表：user/category/notice/favorite/notification/operation_log/search_log）。
+3. **论文数据模型部分：** 可直接参考 `backend/models/*.py` 画出 ER 图（9 张表：user/category/notice/favorite/comment/notice_like/notification/operation_log/search_log）。
 4. **性能优化亮点：** 论文中可对比 LIKE 与 FULLTEXT 全文检索的性能差异；Redis 缓存对热点接口的加速效果。
 5. **部署加分：** 有条件的同学可以把后端部署到云服务器（腾讯云/阿里云），小程序端改为 HTTPS 域名并在公众平台配置 request 合法域名；或直接用 `docker-compose` 在服务器一键部署。
 
@@ -355,5 +378,8 @@ A: 不会。`utils/cache.py` 会在启动时检测 Redis，连接失败则自动
 
 **Q: 搜索用 LIKE 还是全文检索？**
 A: 启动时自动检测 `notice` 表是否有 FULLTEXT 索引。若执行过 `init.sql` 则有索引，使用 `MATCH AGAINST` 全文检索；否则降级为 `LIKE`。日志中会打印 `[Search]` 提示当前模式。
+
+**Q: 怎么跑单元测试？**
+A: 进入 `backend/` 目录，确保 MySQL 已启动，执行 `venv\Scripts\python.exe -m pytest`（macOS/Linux 用 `venv/bin/python -m pytest`）。测试会自动创建独立库 `campus_notice_test`，**不会影响**正式库 `campus_notice`。
 
 祝毕业设计顺利，答辩一次过！🎓
