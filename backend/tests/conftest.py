@@ -20,13 +20,30 @@ os.environ["SECRET_KEY"] = "test-secret-key-for-pytest-only"
 import pytest
 import pymysql
 
-# 测试库连接信息（与 .env 中正式库同一 MySQL 实例，仅库名不同）
+# 测试库连接信息：从 .env 读取，避免在代码中硬编码真实密码（已提交到 GitHub）
+def _load_env_password():
+    """从 backend/.env 读取数据库密码，找不到则回退到环境变量或默认占位值。"""
+    import os
+    # 优先环境变量
+    pw = os.environ.get("DATABASE_PASSWORD")
+    if pw:
+        return pw
+    # 再读 .env 文件
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    if os.path.exists(env_path):
+        with open(env_path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("DATABASE_PASSWORD="):
+                    return line.split("=", 1)[1].strip()
+    return "123456"  # 回退默认值（与 .env.example 一致）
+
 TEST_DB_NAME = "campus_notice_test"
 MYSQL = {
     "host": "127.0.0.1",
     "port": 3306,
     "user": "root",
-    "password": "19491001@Mysql!!",
+    "password": _load_env_password(),
 }
 
 
